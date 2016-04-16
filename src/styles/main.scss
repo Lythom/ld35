@@ -34,9 +34,11 @@ h1 {
   font-size: 50px;
   margin: 0 auto 0 auto;
   text-align: center;
-  font-family: "Arial Black";
+  font-family: monospace;
+  font-weight: bold;
   display: block;
   font-weight: normal;
+  text-transform: uppercase;
 }
 
 h2 {
@@ -47,20 +49,45 @@ h2 {
   font-size: 22px;
 }
 
+.grid {
+  margin: auto;
+  width: 449px;
+  position: relative;
+
+  .gem {
+
+    transition: transform 0.5s;
+
+    img {
+      position:absolute;
+    }
+  }
+}
 table {
   border-collapse: collapse;
-  margin: auto;
 }
 tr {
 
 }
 td {
   box-sizing: border-box;
-  border:1px solid $colorRamp4-3;
+  border:1px dotted $colorRamp4-3;
   width:64px;
   height:64px;
+  padding:0;
   text-align: center;
   vertical-align: middle;
+  position:relative;
+}
+
+.preview {
+  position: absolute;
+  background: url(../images/selector.png);
+  background-repeat: no-repeat;
+  width: 146px;
+  height:92px;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
 button {
@@ -108,7 +135,7 @@ label {
 .i-bloc {
   position: relative;
   display: inline-block;
-  border: 3px solid $colorRamp5-1;
+  border: 3px outset $colorRamp1-2;
   background-color: $colorRamp1-1;
   border-radius: 3px;
   padding: 10px;

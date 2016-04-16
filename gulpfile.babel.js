@@ -57,17 +57,22 @@ gulp.task('clean', cb => {
 gulp.task('browserSync', () => {
   browserSync({
     server: {
-      baseDir: './'
+      baseDir: './dist'
     }
   });
 });
 
-gulp.task('watchify', () => {
-  const bundler = watchify(browserify(opts));
+gulp.task('watchify', function() {
+  const bundler = watchify(browserify(opts), {poll: true});
 
   function rebundle() {
+    console.log("rebundling");
     return bundler.bundle()
-      .on('error', notify.onError())
+      .on('error', function (err) {
+        console.log(err.toString());
+        this.emit('end');
+      })
+      .on('log', sass.logError)
       .pipe(source(paths.bundle))
       .pipe(buffer())
       .pipe(sourcemaps.init({ loadMaps: true }))
@@ -119,15 +124,8 @@ gulp.task('images', () => {
     .pipe(gulp.dest(paths.distImg));
 });
 
-gulp.task('lint', () => {
-  gulp.src(paths.srcLint)
-  .pipe(eslint())
-  .pipe(eslint.format());
-});
-
 gulp.task('watchTask', () => {
   gulp.watch(paths.srcCss, ['styles']);
-  gulp.watch(paths.srcLint, ['lint']);
 });
 
 gulp.task('deploy', () => {
@@ -136,7 +134,7 @@ gulp.task('deploy', () => {
 });
 
 gulp.task('watch', cb => {
-  runSequence('clean', ['browserSync', 'watchTask', 'watchify', 'styles', 'lint', 'images'], cb);
+  runSequence('clean', ['browserSync', 'watchTask', 'watchify', 'styles', 'images', 'htmlReplace'], cb);
 });
 
 gulp.task('build', cb => {
