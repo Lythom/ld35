@@ -1,14 +1,38 @@
 import React, {Component, PropTypes} from 'react'
-import ReactDOM from 'react-dom'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-import {placeTriangle} from '../Index.js';
+import {place, swap} from '../Index.js';
 
 class Grid extends Component {
 
+  clickCell(iRow, iCol) {
+    switch (this.props.tool) {
+      case 't':
+      case 's':
+      case 'p':
+        this.props.place(iRow, iCol);
+        break;
+      case 'swap':
+        this.props.swap(iRow, iCol);
+        break;
+    }
+  }
+
   render() {
+
+    let swappingIndicator = null;
+    if (this.props.swapping != null) {
+      swappingIndicator = (
+        <div className="gem" style={{position:'absolute', top:0, left:0, transform: 'translate('+this.props.swapping.col*64+'px,'+this.props.swapping.row*64+'px)'}}>
+          <img src={'images/swapping.png'} alt=""/>
+        </div>)
+    }
+
+    const tool = this.props.tool;
+
     return (
       <div className="grid" ref="grid">
+        {swappingIndicator}
         {this.props.grid.map(
           (row, iRow) => row.map(
             (cell, iCol) => {
@@ -30,7 +54,7 @@ class Grid extends Component {
             (row, iRow) => <tr key={'row-'+iRow}>
               {row.map(
                 (cell, iCol) => (
-                  cell === null ? <td key={'cell-'+iRow+'-'+iCol} onMouseDown={() => this.props.placeTriangle(iRow, iCol)} style={{cursor:'pointer'}}/> :
+                  (cell === null || tool === 'swap') ? <td key={'cell-'+iRow+'-'+iCol} onMouseDown={() => this.clickCell(iRow, iCol)} style={{cursor:'pointer'}}/> :
                     <td key={'cell-'+iRow+'-'+iCol}/>
                 ))}
             </tr>)}
@@ -46,9 +70,11 @@ export default connect( // map states and dispatch to props
     grid      : state.grid,
     mergingTo : state.mergingTo,
     merging   : state.merging,
-    state     : state
+    tool      : state.tool,
+    swapping  : state.swapping
   }),
   (dispatch) => bindActionCreators({
-    placeTriangle
+    place,
+    swap
   }, dispatch)
 )(Grid)

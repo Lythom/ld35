@@ -1,22 +1,29 @@
 import React, {Component, PropTypes} from 'react'
 import {version} from '../../package.json';
+
+import {bindActionCreators} from 'redux'
+
 import Grid from './Grid';
+import Tools from './Tools'
+import Level from './Level'
+
 
 export default class App extends Component {
 
   render() {
 
+
     return (
       <div className="i-bloc" style={{width:900, height:600}}>
         <h1>M3t4morpho5e</h1>
-        <div className="progress i-bloc" style={{height:130}}>
-
-        </div>
+        <div style={{right:10,position:'absolute',top:10}}>Version {version}</div>
+        <Level />
         <section className="i-bloc">
-          <div className="preview"><img src="images/t.png" /></div>
+          <Tools/>
           <Grid/>
+          <div className="help"></div>
         </section>
-        <div style={{textAlign:'right'}}>Version {version}</div>
+
       </div>
     )
   }
