@@ -71,6 +71,10 @@ h2 {
     pointer-events: none;
     transition: transform 0.3s;
 
+    &.slow {
+      transition: transform 1s;
+    }
+
     img {
       position: absolute;
     }
@@ -137,9 +141,10 @@ td {
 .quantity {
   position: absolute;
   top: 13px;
-  right: 16px;
+  left: 80px;
   font-size: 50px;
   font-family: "Arial Black", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  transition: font-size 0.3s;
 }
 
 button {
@@ -202,35 +207,6 @@ label {
   }
   box-sizing: border-box;
   width: 100%;
-}
-
-.collapsable, .expandable {
-  position: relative;
-  cursor: pointer;
-  &:after {
-    font-family: monospace;
-    font-size: 11px;
-    content: '^';
-    top: 5px;
-    right: -25px;
-    display: inline-block;
-    position: absolute;
-    margin-left: 5px;
-    margin-right: 5px;
-    padding-left: 3px;
-    width: 15px;
-    height: 15px;
-    box-sizing: border-box;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    vertical-align: mmoving;
-  }
-}
-
-.expandable {
-  &:after {
-    content: 'v';
-  }
 }
 
 .centered {

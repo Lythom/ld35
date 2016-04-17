@@ -47,7 +47,7 @@ class Level extends Component {
     const progress = this.props.moving ? this.props.leveling ? this.props.level - 2 : this.props.levelProgress - 1 : this.props.levelProgress;
     for (var i = 0; i < nbDoors; i++) {
       doors.push(<div key={i} className={'door'}
-                      style={{transform: 'translate('+(150 + spaceBetweenDoors * (i - progress) + this.state.scroll - this.state.scrollStart)+'px,'+40+'px)'}}></div>)
+                      style={{transform: 'translate('+(240 + spaceBetweenDoors * (i - progress) + this.state.scroll - this.state.scrollStart)+'px,'+40+'px)'}}></div>)
     }
 
 

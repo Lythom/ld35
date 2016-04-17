@@ -19,9 +19,10 @@ const initialState = {
   merging       : [],
   mergingTo     : null,
   score         : 0,
-  level         : 6,
+  level         : 1,
   levelProgress : 0,
   nextLock      : ['t1'],
+  validCells    : [],
   tool          : 't',
   tCount        : -1,
   swapCount     : 10,
@@ -29,7 +30,9 @@ const initialState = {
   pCount        : 0,
   swapping      : null,
   moving        : false,
-  leveling      : false
+  leveling      : false,
+  loot          : [],
+  bestScore     : 0
 };
 
 const store = createStore(rootReducer, initialState, window.devToolsExtension ? window.devToolsExtension() : undefined);
@@ -83,9 +86,18 @@ function rootReducer(state = initialState, action) {
       }
 
     case STOP_MOVING:
+
+      // recalculate valid cells
+      var validCells = calcValidCells(state);
+
       return Object.assign({}, state, {
-        moving   : false,
-        leveling : false
+        moving     : false,
+        leveling   : false,
+        loot       : [],
+        pCount     : state.pCount + state.loot.filter(tool => tool == 'p').length,
+        sCount     : state.sCount + state.loot.filter(tool => tool == 's').length,
+        swapCount  : state.swapCount + state.loot.filter(tool => tool == 'swap').length,
+        validCells : validCells
       });
 
     case DO_MERGE:
@@ -166,11 +178,13 @@ function updateLocks(state) {
   let score = state.score;
   let moving = false;
   var leveling = false;
+  var loot = state.loot;
   if (isComplete) {
     levelProgress++;
     score += sum(...validCells.map(cell => calcScore(cell.value)));
     moving = true;
     if (levelProgress >= level) {
+      loot = generateLoot(level);
       level++;
       levelProgress = 0;
       leveling = true;
@@ -184,17 +198,15 @@ function updateLocks(state) {
     }
 
     // remove valid cells
+    var validCells2 = validCells;
     nextLock.forEach(value => {
-      var cellIdx = validCells.findIndex(cell => cell.value === value);
-      var cell = validCells[cellIdx];
-      validCells = [...validCells.slice(0, cellIdx), ...validCells.slice(cellIdx + 1)];
+      var cellIdx = validCells2.findIndex(cell => cell.value === value);
+      var cell = validCells2[cellIdx];
+      validCells2 = [...validCells2.slice(0, cellIdx), ...validCells2.slice(cellIdx + 1)];
       newState = immutableMerge(newState, ['grid', cell.row, cell.col], null);
     });
 
     nextLock = randomizeNextLock(level, score);
-
-    // recalculate valid cells
-    validCells = calcValidCells(newState);
   }
 
   return Object.assign({}, newState, {
@@ -203,9 +215,24 @@ function updateLocks(state) {
     level         : level,
     levelProgress : levelProgress,
     score         : score,
+    bestScore     : Math.max(score, newState.bestScore),
     moving        : moving,
-    leveling      : leveling
+    leveling      : leveling,
+    loot          : loot
   });
+}
+
+const possibleLoots = [
+  's',
+  'p',
+  'swap'
+];
+function generateLoot(qtt) {
+  var loot = [];
+  for (var i = 0; i < qtt + 2; i++) {
+    loot.push(possibleLoots[Math.floor(Math.random() * possibleLoots.length)]);
+  }
+  return loot;
 }
 
 function calcValidCells(state) {
@@ -252,7 +279,7 @@ function calcMaxLevel(score, type) {
 }
 
 function randomizeNextLock(level, score) {
-  var nextLockScore = score * 0.5 + 6;
+  var nextLockScore = score * 0.3 + 12;
   var locks = [];
 
   do {
