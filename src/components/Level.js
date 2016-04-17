@@ -52,7 +52,7 @@ class Level extends Component {
 
 
     return (
-      <div className="progress i-bloc" style={{height:160, backgroundPositionX: this.state.scroll}}>
+      <div className="progress i-bloc" style={{height:160, backgroundPosition: this.state.scroll+"px 0px"}}>
         {doors}
         <div className={'char '+(this.props.moving ? 'char_moving' : '')}></div>
         <span style={{float:'left', fontSize: this.props.leveling ? 50 : 24, transition: "font-size 0.5s"}}>Level {level} ({levelProgress}/{level})</span>

@@ -21,9 +21,10 @@ class App extends Component {
         <h1>M3t4morpho5e</h1>
         <div style={{right:10,position:'absolute',top:10}}>Version {version}</div>
         <div style={{right:10,position:'absolute',top:30}}>Best Score {this.props.bestScore}</div>
-        <button className="restart" onClick={() => this.props.restart()}>Restart</button>
+        <button className={'restart' + (this.props.mode === 'easy' ? ' selected' : '')} onClick={() => this.props.restart('easy')}>Restart<br/>Easy mode</button>
+        <button className={'restart restart-bis' + (this.props.mode === 'hard' ? ' selected' : '')} onClick={() => this.props.restart('hard')}>Restart<br/>Hard mode</button>
         <Level />
-        <section className="i-bloc">
+        <section className="i-bloc" style={{height: 340}}>
           <Tools/>
           <Grid/>
           <div className="help"></div>
@@ -36,7 +37,8 @@ class App extends Component {
 
 export default connect( // map states and dispatch to props
   (state) => ({
-    bestScore : state.bestScore
+    bestScore : state.bestScore,
+    mode      : state.mode
   }),
   (dispatch) => bindActionCreators({
     restart

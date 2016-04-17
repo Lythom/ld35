@@ -5,17 +5,21 @@ import {Provider} from 'react-redux'
 import {createStore} from 'redux'
 import {immutableMerge} from './immutability'
 
+import 'babel-polyfill';
+
 window.React = React;
+
+const grid3 = [
+  [null, null, null, null, null, null],
+  [null, null, null, null, null, null],
+  [null, null, null, null, null, null],
+  [null, null, null, null, null, null],
+  [null, null, null, null, null, null]
+];
 
 const initialState = {
   progress      : 0,
-  grid          : [
-    [null, null, null, null, null, null],
-    [null, null, null, null, null, null],
-    [null, null, null, null, null, null],
-    [null, null, null, null, null, null],
-    [null, null, null, null, null, null]
-  ],
+  grid          : grid3,
   merging       : [],
   mergingTo     : null,
   score         : 0,
@@ -25,14 +29,15 @@ const initialState = {
   validCells    : [],
   tool          : 't',
   tCount        : -1,
-  swapCount     : 10,
+  swapCount     : 3,
   sCount        : 0,
   pCount        : 0,
   swapping      : null,
   moving        : false,
   leveling      : false,
   loot          : [],
-  bestScore     : 0
+  bestScore     : 0,
+  mode          : 'easy'
 };
 
 const store = createStore(rootReducer, initialState, window.devToolsExtension ? window.devToolsExtension() : undefined);
@@ -114,7 +119,8 @@ function rootReducer(state = initialState, action) {
 
     case RESTART:
       return Object.assign({}, initialState, {
-        bestScore : state.bestScore
+        bestScore : state.bestScore,
+        mode      : action.payload
       });
     default:
       return state
@@ -152,9 +158,10 @@ export function doMerge() {
 }
 
 export const RESTART = 'RESTART'
-export function restart() {
+export function restart(mode) {
   return {
-    type : RESTART
+    type    : RESTART,
+    payload : mode
   }
 }
 
@@ -192,7 +199,11 @@ function updateLocks(state) {
   var loot = state.loot;
   if (isComplete) {
     levelProgress++;
-    score += sum(...validCells.map(cell => calcScore(cell.value)));
+    var scoreMult = 1;
+    if (state.mode === 'hard') {
+      scoreMult = 2;
+    }
+    score += sum(...validCells.map(cell => calcScore(cell.value) * scoreMult));
     moving = true;
     if (levelProgress >= level) {
       loot = generateLoot(level);
@@ -214,10 +225,13 @@ function updateLocks(state) {
       var cellIdx = validCells2.findIndex(cell => cell.value === value);
       var cell = validCells2[cellIdx];
       validCells2 = [...validCells2.slice(0, cellIdx), ...validCells2.slice(cellIdx + 1)];
-      //newState = immutableMerge(newState, ['grid', cell.row, cell.col], null);
+      if (state.mode === 'easy') {
+        newState = immutableMerge(newState, ['grid', cell.row, cell.col], null);
+      }
+
     });
 
-    nextLock = randomizeNextLock(level, score);
+    nextLock = randomizeNextLock(level, score, state.mode);
   }
 
   return Object.assign({}, newState, {
@@ -290,8 +304,12 @@ function calcMaxLevel(score, type) {
   return Math.floor(Math.log((score / mult)) / Math.log(3) - plus);
 }
 
-function randomizeNextLock(level, score) {
-  var nextLockScore = score * 1 + 12;
+function randomizeNextLock(level, score, mode) {
+  var mult = 0.3;
+  if (mode === 'hard') {
+    mult = 0.5
+  }
+  var nextLockScore = score * mult + 12;
   var locks = [];
 
   do {
@@ -308,7 +326,7 @@ function randomizeNextLock(level, score) {
       locks.push(piece);
       nextLockScore = nextLockScore - calcScore(piece);
     }
-  } while (possiblePieces.length > 0 && locks.length < level && nextLockScore > 3);
+  } while (possiblePieces.length > 0 && locks.length < level - 1 && nextLockScore > 3);
 
   return locks;
 }

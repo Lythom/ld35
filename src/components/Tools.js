@@ -58,7 +58,7 @@ class Tools extends Component {
     }
 
     return (
-      <div className="preview" style={{backgroundPositionY: toolY}}>
+      <div className="preview" style={{backgroundPosition: "3px "+toolY+"px"}}>
         <div>
           <button className={this.props.tool == 't' ? 'selected' : null} onClick={() => this.props.changeTool('t')}><img src="images/t.png"/></button>
           <div className="quantity"
