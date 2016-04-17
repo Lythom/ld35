@@ -7,6 +7,9 @@ import Grid from './Grid';
 import Tools from './Tools'
 import Level from './Level'
 
+import {restart} from '../Index'
+import {bindActionCreators} from 'redux'
+
 
 class App extends Component {
 
@@ -18,6 +21,7 @@ class App extends Component {
         <h1>M3t4morpho5e</h1>
         <div style={{right:10,position:'absolute',top:10}}>Version {version}</div>
         <div style={{right:10,position:'absolute',top:30}}>Best Score {this.props.bestScore}</div>
+        <button className="restart" onClick={() => this.props.restart()}>Restart</button>
         <Level />
         <section className="i-bloc">
           <Tools/>
@@ -33,5 +37,8 @@ class App extends Component {
 export default connect( // map states and dispatch to props
   (state) => ({
     bestScore : state.bestScore
-  })
+  }),
+  (dispatch) => bindActionCreators({
+    restart
+  }, dispatch)
 )(App)

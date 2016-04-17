@@ -112,6 +112,10 @@ function rootReducer(state = initialState, action) {
         tool : action.payload
       });
 
+    case RESTART:
+      return Object.assign({}, initialState, {
+        bestScore : state.bestScore
+      });
     default:
       return state
   }
@@ -144,6 +148,13 @@ export const DO_MERGE = 'DO_MERGE'
 export function doMerge() {
   return {
     type : DO_MERGE
+  }
+}
+
+export const RESTART = 'RESTART'
+export function restart() {
+  return {
+    type : RESTART
   }
 }
 
@@ -203,7 +214,7 @@ function updateLocks(state) {
       var cellIdx = validCells2.findIndex(cell => cell.value === value);
       var cell = validCells2[cellIdx];
       validCells2 = [...validCells2.slice(0, cellIdx), ...validCells2.slice(cellIdx + 1)];
-      newState = immutableMerge(newState, ['grid', cell.row, cell.col], null);
+      //newState = immutableMerge(newState, ['grid', cell.row, cell.col], null);
     });
 
     nextLock = randomizeNextLock(level, score);
@@ -225,6 +236,7 @@ function updateLocks(state) {
 const possibleLoots = [
   's',
   'p',
+  'swap',
   'swap'
 ];
 function generateLoot(qtt) {
@@ -279,7 +291,7 @@ function calcMaxLevel(score, type) {
 }
 
 function randomizeNextLock(level, score) {
-  var nextLockScore = score * 0.3 + 12;
+  var nextLockScore = score * 1 + 12;
   var locks = [];
 
   do {
@@ -309,7 +321,7 @@ function isLevelComplete(locks, values) {
 }
 
 function canSwap(grid, c1, r1, c2, r2) {
-  if (r1 === c1 && r2 === c2 || grid[r1][c1] == null) return false;
+  if (r1 === r2 && c1 === c2 || grid[r1][c1] == null) return false;
   const previewGrid = immutableMerge(grid, [r2, c2], grid[r1][c1])
   const previewMerge = calcMerge(previewGrid, {col : c2, row : r2})
   return previewMerge.toMerge != null && previewMerge.toMerge.length > 0;
