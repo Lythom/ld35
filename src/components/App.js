@@ -17,14 +17,13 @@ class App extends Component {
 
 
     return (
-      <div className="i-bloc" style={{width:900, height:600}}>
+      <div className="i-bloc" style={{width:890, height:600, margin:0}}>
         <h1>M3t4morpho5e</h1>
-        <div style={{right:10,position:'absolute',top:10}}>Version {version}</div>
-        <div style={{right:10,position:'absolute',top:30}}>Best Score {this.props.bestScore}</div>
+        <div style={{right:10,position:'absolute',top:10}}>Best Score {this.props.bestScore}</div>
         <button className={'restart' + (this.props.mode === 'easy' ? ' selected' : '')} onClick={() => this.props.restart('easy')}>Restart<br/>Easy mode</button>
         <button className={'restart restart-bis' + (this.props.mode === 'hard' ? ' selected' : '')} onClick={() => this.props.restart('hard')}>Restart<br/>Hard mode</button>
         <Level />
-        <section className="i-bloc" style={{height: 340}}>
+        <section className="i-bloc" style={{height: 350, marginBottom: 0}}>
           <Tools/>
           <Grid/>
           <div className="help"></div>

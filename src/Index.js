@@ -42,6 +42,17 @@ const initialState = {
 
 const store = createStore(rootReducer, initialState, window.devToolsExtension ? window.devToolsExtension() : undefined);
 
+const mutableState = {};
+var lastStoreState = null;
+store.subsribe(() => {
+  let previousState = lastStoreState;
+  let currentState = store.getState();
+  if (lastStoreState !== currentValue) {
+    lastStoreState = currentState;
+    
+  }
+});
+
 render(
   <Provider store={store}><App /></Provider>,
   document.getElementById('content')

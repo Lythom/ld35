@@ -30,6 +30,13 @@ body {
   font-size: 14px;
 }
 
+.content {
+  position: relative;
+  height: 600px;
+  width: 900px;
+  overflow: hidden;
+}
+
 h1 {
   font-size: 50px;
   margin: 0 auto 0 auto;
